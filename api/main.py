@@ -1,3 +1,8 @@
+"""FastAPI service for Korean legal questions.
+
+This module is a demo and its responses should not be taken as official legal advice.
+"""
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
@@ -5,15 +10,20 @@ import json
 import os
 from transformers import pipeline
 
-DATA_FILE = os.path.join(os.path.dirname(__file__), '..', 'data', 'legal_cases.jsonl')
+BASE_DIR = os.path.dirname(__file__)
+DATA_FILE = os.path.join(BASE_DIR, '..', 'data', 'legal_cases.jsonl')
+MODEL_DIR = os.path.join(BASE_DIR, '..', 'model')
 
 app = FastAPI(title="Korean Legal QA")
 
 class Question(BaseModel):
     query: str
 
-# Load model - for demo we use default model
-qa_pipeline = pipeline('text-generation', model='skt/kogpt2-base-v2')
+# Load model - use fine-tuned model if available
+if os.path.exists(MODEL_DIR):
+    qa_pipeline = pipeline('text-generation', model=MODEL_DIR)
+else:
+    qa_pipeline = pipeline('text-generation', model='skt/kogpt2-base-v2')
 
 # Load case data
 cases = []
