@@ -2,3 +2,5 @@ fastapi
 uvicorn
 transformers
 tokenizers
+requests
+beautifulsoup4
